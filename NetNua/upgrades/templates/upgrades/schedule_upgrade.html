@@ -1,0 +1,15 @@
+{% extends 'upgrades/home.html' %}
+
+{% block content %}
+  <h2>Schedule Upgrade</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.devices.label_tag }}<br>
+    {{ form.devices }}<br>
+    {{ form.scheduled_upgrade.label_tag }}<br>
+    {{ form.scheduled_upgrade }}<br>
+    {{ form.description.label_tag }}<br>
+    {{ form.description }}<br>
+    <button type="submit" class="btn btn-primary">Schedule</button>
+  </form>
+{% endblock content %}

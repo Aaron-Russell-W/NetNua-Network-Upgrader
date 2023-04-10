@@ -1,0 +1,37 @@
+{% extends "devices/base.html" %}
+{% block content %}
+  <h2>Upgrades</h2>
+  {% if upgrades %}
+    <table class ="table table-bordered table-hover">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Scheduled Time</th>
+          <th>Description</th>
+          <th>Devices</th>
+          <th>User</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for upgrade in upgrades %}
+          <tr class = 'clickable-row' onclick="window.location='/upgrades/{{upgrade.pk}}';">
+            <td>{{ upgrade.pk }}</td>
+            <td>{{ upgrade.scheduled_upgrade }}</td>
+            <td>{{ upgrade.description }}</td>
+            <td>
+              {% for device in upgrade.devices.all %}
+                {{ device.dnsName }}{% if not forloop.last %}, {% endif %}
+              {% endfor %}
+            </td>
+            <td>{{upgrade.user}}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No upgrades found.</p>
+  {% endif %}
+{% endblock content %}
+{% block nav_items %}
+<a class="nav-item nav-link" href="{% url 'upgrades-create' %}">New Upgrade</a>
+{% endblock nav_items %}

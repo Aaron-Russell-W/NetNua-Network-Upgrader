@@ -1,0 +1,11 @@
+{% extends "devices/base.html" %}
+{% block content %}
+    {% for device in devices%}
+<div>
+        <h2> <a href="{% url 'device-detail' device.id %}"> DnsName: {{ device.dnsName }}</a></h2>
+        <p> Manufacturer: {{device.manufacturer}}</p>
+        <p>At {{ device.location }}</p>
+</div>
+    {% endfor %}
+
+{% endblock content %}
