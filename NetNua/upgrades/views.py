@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.shortcuts import render
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -14,14 +16,17 @@ from django.views.generic import (
     UpdateView,
     DeleteView
 )
+import paramiko
 
 
 def home(request):
     upgrades = UpgradeEvent.objects.all()
     return render(request, 'upgrades/home.html', {'upgrades': upgrades})
 
+
 class UpgradeDetailView(DetailView):
     model = UpgradeEvent
+
 
 class UpgradeListView(ListView):
     model = UpgradeEvent
@@ -33,6 +38,15 @@ class UpgradeCreateView(LoginRequiredMixin, CreateView):
     model = UpgradeEvent
     form_class = UpgradeEventForm
 
+
+class UpgradeUpdateView(LoginRequiredMixin, UpdateView):
+    model = UpgradeEvent
+    form_class = UpgradeEventForm
+
+
+class UpgradeDeleteView(LoginRequiredMixin, DeleteView):
+    model = UpgradeEvent
+    success_url = '/'
 
 
 @login_required
@@ -49,3 +63,22 @@ def schedule_upgrade(request):
         form = UpgradeEventForm()
 
     return render(request, 'upgrades/schedule_upgrade.html', {'form': form})
+
+
+def check_upgrades(request):
+    now = datetime.now()
+    upgrades = UpgradeEvent.objects.filter(scheduled_upgrade__lte=now, completed=False)
+    for upgrade in upgrades:
+        for device in upgrade.devices.all():
+            ssh = paramiko.SSHClient()
+            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            ssh.connect(device.dnsName, username=device.loginUser, password=device.loginPwd)
+            stdin, stdout, stderr = ssh.exec_command('show version')
+            # handle the output
+            for line in stdout:
+                if 'Version' in line:
+                    device.currentVersion = line.split(' ')[1]
+                    device.save()
+            upgrade.complated = True
+            upgrade.save()
+            ssh.close()

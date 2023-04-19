@@ -9,6 +9,6 @@ class UpgradeEvent(models.Model):
     devices = models.ManyToManyField(Device)
     scheduled_upgrade = models.DateTimeField()
     description = models.TextField(blank=True, null=True)
-
+    completed = models.BooleanField(default=False)
     def __str__(self):
         return f"Upgrade Event {self.pk} - {self.scheduled_upgrade}"
