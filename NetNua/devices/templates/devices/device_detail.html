@@ -1,8 +1,11 @@
 {% extends "devices/base.html" %}
 {% block content %}
-    <h1>DnsName: {{ object.dnsName }}</h1>
-    <p> Manufacturer: {{object.manufacturer}}</p>
-    <p>At {{ object.location }}</p>
+    <p>DnsName: {{ object.dnsName }}</p>
+    <p>Manufacturer: {{object.manufacturer}}</p>
+    <p>Device Type: {{object.deviceType}}</p>
+    <p>Current Version: {{object.currentVersion}}</p>
+    <p>Location: {{ object.location }}</p>
+    <p></p>
     <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'device-update' object.id %}"> Update </a>
     <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'device-delete' object.id %}"> Delete </a>
 {% endblock content %}

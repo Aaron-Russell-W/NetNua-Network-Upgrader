@@ -1,6 +1,13 @@
 {% extends "upgrades/home.html" %}
 {% block content %}
-    <h1>Date/Time: {{ object.dnsName }}</h1>
-    <p> Manufacturer: {{object.manufacturer}}</p>
-    <p>At {{ object.location }}</p>
+    <h1>Scheduled Time: {{ object.scheduled_upgrade }}</h1>
+<p> Devices:
+{% for device in object.devices.all %}
+                {{ device.dnsName }}{% if not forloop.last %}, {% endif %}
+              {% endfor %}
+</p>
+    <p> Description: {{ object.description }}</p>
+    <p> User: {{ object.user }}</p>
+    <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'upgrades:upgrade-update' object.id %}"> Update </a>
+    <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'upgrades:upgrade-delete' object.id %}"> Delete </a>
 {% endblock content %}

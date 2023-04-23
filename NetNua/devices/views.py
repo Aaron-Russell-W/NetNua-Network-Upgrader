@@ -2,6 +2,9 @@ import paramiko
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
+
+from .forms import DeviceForm
 from .models import Device
 from django.views.generic import (
     ListView,
@@ -31,35 +34,55 @@ class DeviceDetailView(DetailView):
 
 class DeviceCreateView(LoginRequiredMixin, CreateView):
     model = Device
-    fields = ['dnsName', 'location', 'deviceType', 'manufacturer', 'loginUser',
-              'loginPwd']
-    def form_valid(self, form):
-        dnsname = form.cleaned_data.get('dnsName')
-        username = form.cleaned_data.get('loginUser')
-        password = form.cleaned_data.get('loginPwd')
-        manufacturer = form.cleaned_data.get('manufacturer')
-        if manufacturer == 'Cisco': command = 'show version'
-        if manufacturer == 'Juniper': command = 'show version'
-        if manufacturer == 'Arista': command = 'show version'
-        if manufacturer == 'Huawei': command = 'display version'
-        ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(dnsname, username=username, password=password)
-        stdin, stdout, stderr = ssh.exec_command(command)
-        version = stdout.read().decode('utf-8')
-        form.instance.currentVersion = version
+    form_class = DeviceForm
 
+    def form_valid(self, form):
+        form.instance.created_by = self.request.user
+        response = super().form_valid(form)
+        result = update_device_version(self.object)
+        if result == "success":
+            messages.success(self.request, "Device created successfully and version information updated.")
+        else:
+            messages.error(self.request, f"Device created, but failed to update version information: {result}")
+        return response
 
 
 class DeviceUpdateView(LoginRequiredMixin, UpdateView):
     model = Device
     fields = ['dnsName', 'location', 'manufacturer', 'deviceType', 'manufacturer', 'currentVersion', 'loginUser',
               'loginPwd']
+    success_url = "/"
 
 
 class DeviceDeleteView(LoginRequiredMixin, DeleteView):
     model = Device
     success_url = '/'
 
-https://github.com/ktbyers/netmiko/blob/develop/EXAMPLES.md#simple-example
-https://github.com/ktbyers/netmiko/blob/develop/EXAMPLES.md#auto-detection-using-ssh
+
+def update_device_version(device):
+    dnsname = device.dnsName
+    username = device.loginUser
+    password = device.loginPwd
+    manufacturer = device.manufacturer
+
+    if manufacturer == 'Cisco':
+        command = 'show version'
+    elif manufacturer == 'Juniper':
+        command = 'show version'
+    elif manufacturer == 'Huawei':
+        command = 'display version'
+    elif manufacturer == 'Arista':
+        command = 'show version'
+
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+    try:
+        ssh.connect(dnsname, username=username, password=password)
+        stdin, stdout, stderr = ssh.exec_command(command)
+        version = stdout.read().decode('utf-8')
+        device.currentVersion = version
+        device.save()
+        return "success"
+    except Exception as e:
+        return str(e)

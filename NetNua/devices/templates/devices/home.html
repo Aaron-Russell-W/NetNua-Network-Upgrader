@@ -1,11 +1,34 @@
 {% extends "devices/base.html" %}
 {% block content %}
-    {% for device in devices%}
-<div>
-        <h2> <a href="{% url 'device-detail' device.id %}"> DnsName: {{ device.dnsName }}</a></h2>
-        <p> Manufacturer: {{device.manufacturer}}</p>
-        <p>At {{ device.location }}</p>
-</div>
-    {% endfor %}
+  <h2>Device Management</h2>
+  {% if devices %}
+    <table class ="table table-bordered table-hover">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>DNS Name</th>
+          <th>Location</th>
+          <th>Manufacturer</th>
+          <th>Device Type</th>
+          <th>Current Version</th>
 
+        </tr>
+      </thead>
+      <tbody>
+        {% for device in devices %}
+          <tr class = 'clickable-row' onclick="window.location='/device/{{device.pk}}';">
+            <td>{{ device.pk }}</td>
+            <td>{{ device.dnsName }}</td>
+            <td>{{ device.location }}</td>
+            <td>{{ device.manufacturer }}</td>
+            <td>{{ device.deviceType }}</td>
+            <td>{{ device.currentVersion }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No devices found.</p>
+  {% endif %}
 {% endblock content %}
+

@@ -37,16 +37,22 @@ class UpgradeListView(ListView):
 class UpgradeCreateView(LoginRequiredMixin, CreateView):
     model = UpgradeEvent
     form_class = UpgradeEventForm
+    success_url = "/upgrades"
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
 
 
 class UpgradeUpdateView(LoginRequiredMixin, UpdateView):
     model = UpgradeEvent
     form_class = UpgradeEventForm
+    success_url = "/upgrades"
 
 
 class UpgradeDeleteView(LoginRequiredMixin, DeleteView):
     model = UpgradeEvent
-    success_url = '/'
+    success_url = '/upgrades'
 
 
 @login_required

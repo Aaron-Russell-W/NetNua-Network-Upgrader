@@ -1,6 +1,6 @@
 {% extends "devices/base.html" %}
 {% block content %}
-  <h2>Upgrades</h2>
+  <h2>Upgrade Scheduling</h2>
   {% if upgrades %}
     <table class ="table table-bordered table-hover">
       <thead>
@@ -10,6 +10,7 @@
           <th>Description</th>
           <th>Devices</th>
           <th>User</th>
+          <th>Code Version</th>
         </tr>
       </thead>
       <tbody>
@@ -24,6 +25,7 @@
               {% endfor %}
             </td>
             <td>{{upgrade.user}}</td>
+            <td>{{upgrade.code_version}}</td>
           </tr>
         {% endfor %}
       </tbody>
@@ -33,5 +35,5 @@
   {% endif %}
 {% endblock content %}
 {% block nav_items %}
-<a class="nav-item nav-link" href="{% url 'upgrades-create' %}">New Upgrade</a>
+<a class="nav-item nav-link" href="{% url 'upgrades:upgrades-create' %}">New Upgrade</a>
 {% endblock nav_items %}

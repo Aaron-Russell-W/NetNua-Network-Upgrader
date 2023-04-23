@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import UpgradeListView, UpgradeCreateView, UpgradeDetailView, UpgradeDeleteView, UpgradeUpdateView
 from . import views
+app_name= 'upgrades'
 urlpatterns = [
     path('', UpgradeListView.as_view(), name="upgrades-home"),
     path('new/', UpgradeCreateView.as_view(), name="upgrades-create"),

@@ -1,0 +1,14 @@
+{% extends "devices/base.html" %}
+
+{% block content %}
+<div class="content-section">
+    <h2>Create Upgrade Event</h2>
+    <div class = "form-group"></div>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-primary" type="submit">Create Upgrade Event</button>
+    </form>
+</div>
+</div>
+{% endblock content %}
