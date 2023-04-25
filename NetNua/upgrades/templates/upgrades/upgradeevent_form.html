@@ -12,3 +12,6 @@
 </div>
 </div>
 {% endblock content %}
+{% block nav_items %}
+<a class="nav-item nav-link" href="{% url 'upgrades:upgrades-create' %}">New Upgrade</a>
+{% endblock nav_items %}

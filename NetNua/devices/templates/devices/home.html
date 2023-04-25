@@ -1,22 +1,21 @@
 {% extends "devices/base.html" %}
 {% block content %}
-  <h2>Device Management</h2>
+  <h2><u>Device Management</u></h2>
   {% if devices %}
     <table class ="table table-bordered table-hover">
       <thead>
         <tr>
-          <th>ID</th>
-          <th>DNS Name</th>
-          <th>Location</th>
-          <th>Manufacturer</th>
-          <th>Device Type</th>
-          <th>Current Version</th>
-
+          <th class = 'clickable-row' onclick="window.location='/devices/sort/pk';">ID</th>
+          <th class = 'clickable-row' onclick="window.location='/devices/sort/dnsName';">DNS Name</th>
+          <th class = 'clickable-row' onclick="window.location='/devices/sort/location';">Location</th>
+          <th class = 'clickable-row' onclick="window.location='/devices/sort/manufacturer';">Manufacturer</th>
+          <th class = 'clickable-row' onclick="window.location='/devices/sort/deviceType';">Device Type</th>
+          <th class = 'clickable-row' onclick="window.location='/devices/sort/currentVersion';">Current Version</th>
         </tr>
       </thead>
       <tbody>
         {% for device in devices %}
-          <tr class = 'clickable-row' onclick="window.location='/device/{{device.pk}}';">
+          <tr class = 'clickable-row' onclick="window.location='/devices/{{device.pk}}';">
             <td>{{ device.pk }}</td>
             <td>{{ device.dnsName }}</td>
             <td>{{ device.location }}</td>

@@ -11,3 +11,6 @@
     <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'upgrades:upgrade-update' object.id %}"> Update </a>
     <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'upgrades:upgrade-delete' object.id %}"> Delete </a>
 {% endblock content %}
+{% block nav_items %}
+<a class="nav-item nav-link" href="{% url 'upgrades:upgrades-create' %}">New Upgrade</a>
+{% endblock nav_items %}

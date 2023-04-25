@@ -1,0 +1,38 @@
+{% extends 'devices/base.html' %}
+
+{% block content %}
+  <h2>Logs</h2>
+  <table class = "table tabled-bordered table-hover">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Instance</th>
+        <th>Message</th>
+        <th>Timestamp</th>
+
+      </tr>
+    </thead>
+    <tbody>
+      {% for log in logs %}
+        <tr>
+          <td>{{ log.get_log_type_display }}</td>
+          {% if log.device %}
+          <td>Device: {{ log.device.dnsName }}</td>
+          {% endif %}
+          {% if log.script %}
+            <td>Log: {{ log.script.name }}</td>
+            {% endif %}
+            {% if log.upgrade %}
+              <td>Upgrade: {{ log.upgrade.name }}</td>
+              {% endif %}
+          <td>{{ log.message }}</td>
+          <td>{{ log.timestamp }}</td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="3">No logs found.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

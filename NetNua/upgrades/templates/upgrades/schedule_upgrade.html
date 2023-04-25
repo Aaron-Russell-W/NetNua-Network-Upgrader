@@ -13,3 +13,6 @@
     <button type="submit" class="btn btn-primary">Schedule</button>
   </form>
 {% endblock content %}
+{% block nav_items %}
+<a class="nav-item nav-link" href="{% url 'upgrades:upgrades-create' %}">New Upgrade</a>
+{% endblock nav_items %}

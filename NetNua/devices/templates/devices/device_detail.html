@@ -6,6 +6,6 @@
     <p>Current Version: {{object.currentVersion}}</p>
     <p>Location: {{ object.location }}</p>
     <p></p>
-    <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'device-update' object.id %}"> Update </a>
-    <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'device-delete' object.id %}"> Delete </a>
+    <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'devices:device-update' object.id %}"> Update </a>
+    <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'devices:device-delete' object.id %}"> Delete </a>
 {% endblock content %}

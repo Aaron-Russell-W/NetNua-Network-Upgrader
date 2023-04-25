@@ -1,6 +1,6 @@
 {% extends "devices/base.html" %}
 {% block content %}
-  <h2>Upgrade Scheduling</h2>
+  <h2><u>Upgrade Scheduling</u></h2>
   {% if upgrades %}
     <table class ="table table-bordered table-hover">
       <thead>
@@ -11,6 +11,7 @@
           <th>Devices</th>
           <th>User</th>
           <th>Code Version</th>
+          <th>Completed</th>
         </tr>
       </thead>
       <tbody>
@@ -26,6 +27,11 @@
             </td>
             <td>{{upgrade.user}}</td>
             <td>{{upgrade.code_version}}</td>
+            <td>{% if upgrade.completed %}
+              <span style="color: green;">&#x2714;</span> <!-- Display a checkmark -->
+            {% else %}
+              <span style="color: red;">&#x2718;</span> <!-- Display a cross -->
+            {% endif %}</td>
           </tr>
         {% endfor %}
       </tbody>

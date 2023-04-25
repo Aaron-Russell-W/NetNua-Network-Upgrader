@@ -1,0 +1,41 @@
+{% extends 'devices/base.html' %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-6"  style="border:2px solid #cecece;">
+      <h3>Devices</h3>
+  <ul>
+    {% for device in devices %}
+      <li>{{ device.dnsName }}</li>
+    {% empty %}
+      <li>No devices found.</li>
+    {% endfor %}
+  </ul>
+    </div>
+    <div class="col-md-6" style="border:2px solid #cecece;">
+      <h3>Upgrade Schedules</h3>
+  <ul>
+    {% for upgrade in upgrades %}
+      <li>{{ upgrade.scheduled_upgrade }}</li>
+    {% empty %}
+      <li>No upgrade schedules found.</li>
+    {% endfor %}
+  </ul>
+    </div>
+    <div class="col-md-6"  style="border:2px solid #cecece;">
+      <h3>Scripts</h3>
+  <ul>
+    {% for script in scripts %}
+      <li>{{ script.name }}</li>
+    {% empty %}
+      <li>No scripts found.</li>
+    {% endfor %}
+  </ul>
+    </div>
+  </div>
+</div>
+
+</div>
+
+{% endblock %}
