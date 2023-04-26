@@ -8,7 +8,7 @@ from .models import Log
 
 @login_required
 def log_list(request):
-    logs = Log.objects.all()| Log.objects.all()
+    logs = Log.objects.all().order_by('-timestamp')
     context = {
         'logs': logs,
     }
