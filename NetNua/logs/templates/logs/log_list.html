@@ -9,6 +9,7 @@
         <th>Instance</th>
         <th>Message</th>
         <th>Timestamp</th>
+        <th>User</th>
 
       </tr>
     </thead>
@@ -27,6 +28,7 @@
               {% endif %}
           <td>{{ log.message }}</td>
           <td>{{ log.timestamp }}</td>
+          <td>{{ log.user.username}}</td>
         </tr>
       {% empty %}
         <tr>

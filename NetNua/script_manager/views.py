@@ -1,10 +1,8 @@
-from django.contrib import messages
-import paramiko
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect
 from django.shortcuts import render
+from logs.models import Log
 from django.views.generic import (
     ListView,
     DetailView,
@@ -12,6 +10,8 @@ from django.views.generic import (
     UpdateView,
     DeleteView
 )
+from netmiko import ConnectHandler
+from paramiko.ssh_exception import SSHException
 
 from .forms import ScriptForm
 from .models import Script
@@ -54,15 +54,80 @@ class ScriptDeleteView(LoginRequiredMixin, DeleteView):
 
 
 @login_required
-def script_execute(request, script_id):
-    script = get_object_or_404(Script, id=script_id, user=request.user)
-    devices = script.devices.all()
+def script_execute(request, pk):
+    script = get_object_or_404(Script, pk=pk)
+    commands = script.content.splitlines()
+    user = request.user
+    for device in script.devices.all():
+        if device.manufacturer == 'Cisco':
+            manu_type='cisco_ios'
+        elif device.manufacturer == 'Juniper':
+            manu_type='juniper'
+        elif device.manufacturer == 'Huawei':
+            manu_type='huawei'
+        elif device.manufacturer == 'Arista':
+            manu_type='arista_eos'
+        device_data = {
+            'device_type': manu_type,
+            'ip': device.dnsName,
+            'username': device.loginUser,
+            'password': device.loginPwd,
+        }
 
-    # Your logic to execute the script on the selected devices
-    # This can be done through SSH, API calls, or other methods depending on the devices
-    for device in devices:
-        # Execute script on device
-        ssh = paramiko.SSHClient()
+        try:
+            connection = ConnectHandler(**device_data)
 
-    messages.success(request, f'Script "{script.name}" has been executed on the selected devices.')
-    return redirect('script_manager:script_list')
+            for command in commands:
+                try:
+                    output = connection.send_command(command)
+                    print(f"Command: {command}\nOutput:\n{output}\n")
+
+                    # Create and save a Log instance
+                    log = Log(
+                        log_type='SUCCESS',
+                        message=f"Device: {device.dnsName} Command: {command}\nOutput:\n{output}",
+                        script=script,
+                        user=user,
+                    )
+                    log.save()
+
+                except Exception as e:
+                    print(f"Error executing command '{command}' on {device.dnsName}: {e}")
+
+                    # Create and save a Log instance
+                    log = Log(
+                        log_type='ERROR',
+                        message=f"Error executing command '{command}': {e}",
+                        script=script,
+                        user=user,
+                    )
+                    log.save()
+
+            # Disconnect
+            connection.disconnect()
+
+        except SSHException as e:
+            print(f"SSH connection error to {device.dnsName}: {e}")
+
+            # Create and save a Log instance
+            log = Log(
+                log_type='ERROR',
+                message=f"SSH connection error to {device.dnsName}: {e}",
+                script=script,
+                user=user,
+            )
+            log.save()
+
+        except Exception as e:
+            print(f"Error connecting to {device.dnsName}: {e}")
+
+            # Create and save a Log instance
+            log = Log(
+                log_type='ERROR',
+                message=f"Error connecting to {device.dnsName}: {e}",
+                script=script,
+                user=user,
+            )
+            log.save()
+
+    return redirect('/')
